@@ -1,0 +1,179 @@
+@use "sass:map";
+@use "sass:list";
+
+$mobile-breakpoint: 768;
+
+/* Цвета */
+$color-main: #232122;
+$color-accent: #C32824;
+$color-white-primary: #F6F6F6;
+$color-bg-secondary: #FFF;
+$color-highlight: #FE76B4;
+$color-warning: #FFC548;
+$color-info: #439FE0;
+$color-light: #6DD0F0;
+$color-purple: #7659FF;
+$color-gold: #F2A531;
+$color-success: #00B487;
+$color-dark-purple: #5534F5;
+$color-error: #F23F3A;
+$color-text-primary: #232122;
+$color-text-secondary: #000000;
+/* Цвета */
+
+/* Типографика */
+$font-family-primary: "Inter", sans-serif;
+$font-family-secondary: "RAYDIS", sans-serif;
+
+$default-font-size: (
+  xm: (
+    desktop: (
+      12px,
+    ),
+    mobile: (
+      12px,
+      120%,
+    ),
+  ),
+  xs: (
+    desktop: (
+      14px,
+    ),
+    mobile: (
+      14px,
+      140%,
+    ),
+  ),
+  s: (
+    desktop: (
+      16px,
+      140%,
+    ),
+    mobile: (
+      13px,
+      140%,
+    ),
+  ),
+  m: (
+    desktop: (
+      18px,
+      100%,
+    ),
+    mobile: (
+      14px,
+    ),
+  ),
+  l: (
+    desktop: (
+      24px,
+      140%,
+    ),
+    mobile: (
+      16px,
+     
+    ),
+  ),
+  xl: (
+    desktop: (
+      32px,
+      118%,
+      -1.32px,
+    ),
+    mobile: (
+      28px,
+      118%,
+      -1.32px,
+    ),
+  ),
+  xxl: (
+    desktop: (
+      36px,
+      105%,
+    ),
+    mobile: (
+      19px,
+    ),
+  ),
+  xxxl: (
+    desktop: (
+      82px,
+    ),
+    mobile: (
+      30px,
+    ),
+  ),
+  xxxxl: (
+    desktop: (
+      160px,
+    ),
+    mobile: (
+      40px,
+    ),
+  ),
+);
+
+/* Миксины */
+@mixin font-size($size, $weight: null, $custom-sizes: null) {
+  $desktop: map.get($default-font-size, $size, "desktop");
+  $mobile: map.get($default-font-size, $size, "mobile");
+
+  @include make-font-size($desktop, $weight);
+
+  $mobile_included: 0;
+
+  @if $custom-sizes {
+    @each $breakpoint, $font-size in $custom-sizes {
+      @if $breakpoint > $mobile-breakpoint {
+        @media screen and (max-width: ($breakpoint + "px")) {
+          @include make-font-size(map.get($default-font-size, $font-size, "desktop"), $weight);
+        }
+      }
+
+      @else {
+        @if $mobile_included == 0 {
+          $mobile_included: 1;
+
+          @media screen and (max-width: ($mobile-breakpoint + "px")) {
+            @include make-font-size($mobile, $weight);
+          }
+        }
+
+        @media screen and (max-width: ($breakpoint + "px")) {
+          @include make-font-size(map.get($default-font-size, $font-size, "mobile"), $weight);
+        }
+      }
+    }
+
+    @if $mobile_included == 0 {
+      $mobile_included: 1;
+
+      @media screen and (max-width: ($mobile-breakpoint + "px")) {
+        @include make-font-size($mobile, $weight);
+      }
+    }
+  }
+
+  @else {
+    @media screen and (max-width: ($mobile-breakpoint + "px")) {
+      @include make-font-size($mobile, $weight);
+    }
+  }
+}
+
+@mixin make-font-size($fs-font-size, $weight) {
+  font-size: list.nth($fs-font-size, 1);
+
+  @if (list.length($fs-font-size) > 1) {
+    line-height: list.nth($fs-font-size, 2);
+  }
+
+  @if (list.length($fs-font-size) > 2) {
+    letter-spacing: list.nth($fs-font-size, 3);
+  }
+
+  @if ($weight) {
+    font-weight: $weight;
+  }
+}
+
+/* Миксины */
